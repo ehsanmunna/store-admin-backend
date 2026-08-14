@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Frozen.API/Frozen.API.csproj" />
+    <Project Path="src/Frozen.Application/Frozen.Application.csproj" />
+    <Project Path="src/Frozen.Domain/Frozen.Domain.csproj" />
+    <Project Path="src/Frozen.Infrastructure/Frozen.Infrastructure.csproj" />
+  </Folder>
+</Solution>
