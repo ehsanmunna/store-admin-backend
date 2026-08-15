@@ -1,4 +1,5 @@
 using Frozen.Application.DTOs.Categories;
+using Frozen.Application.DTOs.Messaging;
 using Frozen.Application.Exceptions;
 using Frozen.Application.Interfaces;
 using Frozen.Domain.Entities;
@@ -10,10 +11,12 @@ namespace Frozen.Application.Services;
 public class CategoryService : ICategoryService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ICatalogEventPublisher _eventPublisher;
 
-    public CategoryService(IUnitOfWork unitOfWork)
+    public CategoryService(IUnitOfWork unitOfWork, ICatalogEventPublisher eventPublisher)
     {
         _unitOfWork = unitOfWork;
+        _eventPublisher = eventPublisher;
     }
 
     public async Task<IReadOnlyList<CategoryDto>> GetAllAsync(CancellationToken cancellationToken = default)
@@ -42,6 +45,7 @@ public class CategoryService : ICategoryService
 
         await _unitOfWork.Categories.AddAsync(category, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _eventPublisher.PublishCategoryCreatedAsync(ToSyncEvent(category), cancellationToken);
         return ToDto(category);
     }
 
@@ -58,6 +62,7 @@ public class CategoryService : ICategoryService
 
         _unitOfWork.Categories.Update(category);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _eventPublisher.PublishCategoryUpdatedAsync(ToSyncEvent(category), cancellationToken);
         return ToDto(category);
     }
 
@@ -72,6 +77,9 @@ public class CategoryService : ICategoryService
 
     private static CategoryDto ToDto(Category c) =>
         new(c.Id, c.Name, c.Slug, c.Description, c.ParentCategoryId, c.Products.Count);
+
+    private static CategorySyncEvent ToSyncEvent(Category c) =>
+        new(c.Id, c.Name, c.Slug, c.Description, c.ParentCategoryId);
 
     private static string Slugify(string name) =>
         name.Trim().ToLowerInvariant().Replace(" ", "-");
