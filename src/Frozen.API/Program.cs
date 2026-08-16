@@ -79,6 +79,27 @@ try
 
     var app = builder.Build();
 
+    if (!app.Environment.IsDevelopment())
+    {
+        var requiredSettings = new[]
+        {
+            "ConnectionStrings:DefaultConnection",
+            "Jwt:Secret",
+            "RabbitMq:Uri"
+        };
+
+        var missingSettings = requiredSettings
+            .Where(key => string.IsNullOrEmpty(app.Configuration[key]))
+            .ToArray();
+
+        if (missingSettings.Length > 0)
+        {
+            throw new InvalidOperationException(
+                $"Missing required configuration for environment '{app.Environment.EnvironmentName}': {string.Join(", ", missingSettings)}. " +
+                "Set these via environment variables (e.g. ConnectionStrings__DefaultConnection) or the hosting platform's secret store.");
+        }
+    }
+
     using (var scope = app.Services.CreateScope())
     {
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
