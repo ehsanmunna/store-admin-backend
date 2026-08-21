@@ -34,10 +34,10 @@ public static class DependencyInjection
             .AddDefaultTokenProviders();
 
         services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionName));
-        services.Configure<SeedAdminSettings>(configuration.GetSection(SeedAdminSettings.SectionName));
         services.AddSingleton<JwtTokenGenerator>();
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IRoleService, RoleService>();
 
         services.Configure<RabbitMqSettings>(configuration.GetSection(RabbitMqSettings.SectionName));
         services.AddSingleton<ICatalogEventPublisher, CatalogEventPublisher>();

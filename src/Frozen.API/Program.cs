@@ -2,7 +2,6 @@ using System.Text.Json.Serialization;
 using Frozen.API.Middleware;
 using Frozen.Application;
 using Frozen.Infrastructure;
-using Frozen.Infrastructure.Identity;
 using Frozen.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -104,7 +103,6 @@ try
     {
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         await db.Database.MigrateAsync();
-        await AdminSeeder.SeedAsync(scope.ServiceProvider);
     }
 
     if (app.Environment.IsDevelopment())
