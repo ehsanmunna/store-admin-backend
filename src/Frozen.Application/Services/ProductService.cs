@@ -1,5 +1,4 @@
 using Frozen.Application.Common;
-using Frozen.Application.DTOs.Messaging;
 using Frozen.Application.DTOs.Products;
 using Frozen.Application.Exceptions;
 using Frozen.Application.Interfaces;
@@ -12,12 +11,10 @@ namespace Frozen.Application.Services;
 public class ProductService : IProductService
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly ICatalogEventPublisher _eventPublisher;
 
-    public ProductService(IUnitOfWork unitOfWork, ICatalogEventPublisher eventPublisher)
+    public ProductService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
-        _eventPublisher = eventPublisher;
     }
 
     public async Task<PagedResult<ProductDto>> GetAllAsync(PagedRequest request, Guid? categoryId, bool? isActive, CancellationToken cancellationToken = default)
@@ -92,8 +89,6 @@ public class ProductService : IProductService
         await _unitOfWork.Products.AddAsync(product, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        await _eventPublisher.PublishProductCreatedAsync(await ToSyncEventAsync(product.Id, cancellationToken), cancellationToken);
-
         return await GetByIdAsync(product.Id, cancellationToken);
     }
 
@@ -125,8 +120,6 @@ public class ProductService : IProductService
         _unitOfWork.Products.Update(product);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        await _eventPublisher.PublishProductUpdatedAsync(await ToSyncEventAsync(product.Id, cancellationToken), cancellationToken);
-
         return await GetByIdAsync(product.Id, cancellationToken);
     }
 
@@ -137,35 +130,6 @@ public class ProductService : IProductService
 
         _unitOfWork.Products.Remove(product);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-        await _eventPublisher.PublishProductDeletedAsync(id, cancellationToken);
-    }
-
-    private async Task<ProductSyncEvent> ToSyncEventAsync(Guid productId, CancellationToken cancellationToken)
-    {
-        var product = await _unitOfWork.Products.Query()
-            .Include(p => p.Category)
-            .Where(p => p.Id == productId)
-            .SingleAsync(cancellationToken);
-
-        return new ProductSyncEvent(
-            product.Id,
-            product.Name,
-            product.Slug,
-            product.Description,
-            product.Sku,
-            product.Price,
-            product.CompareAtPrice,
-            product.StockQuantity,
-            product.ImageUrl,
-            product.IsActive,
-            product.IsFeatured,
-            new CategorySyncEvent(
-                product.Category.Id,
-                product.Category.Name,
-                product.Category.Slug,
-                product.Category.Description,
-                product.Category.ParentCategoryId));
     }
 
     private static ProductDto ToDto(Product p) => new(

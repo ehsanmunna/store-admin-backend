@@ -83,8 +83,7 @@ try
         var requiredSettings = new[]
         {
             "ConnectionStrings:DefaultConnection",
-            "Jwt:Secret",
-            "RabbitMq:Uri"
+            "Jwt:Secret"
         };
 
         var missingSettings = requiredSettings
