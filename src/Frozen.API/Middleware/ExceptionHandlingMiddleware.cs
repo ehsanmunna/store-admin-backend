@@ -33,6 +33,7 @@ public class ExceptionHandlingMiddleware
         {
             NotFoundException => (HttpStatusCode.NotFound, exception.Message),
             ValidationException => (HttpStatusCode.BadRequest, exception.Message),
+            ConflictException => (HttpStatusCode.Conflict, exception.Message),
             _ => (HttpStatusCode.InternalServerError, "An unexpected error occurred.")
         };
 

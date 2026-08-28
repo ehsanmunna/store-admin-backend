@@ -1,4 +1,5 @@
 using Frozen.Application.DTOs.Users;
+using Frozen.Application.DTOs.Roles;
 using Frozen.Application.Interfaces;
 using Frozen.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
@@ -29,5 +30,19 @@ public class UsersController : ControllerBase
     {
         var result = await _userService.CreateAdminAsync(request, cancellationToken);
         return Ok(result);
+    }
+
+    [HttpPost("{id:guid}/reset-password")]
+    public async Task<IActionResult> ResetPassword(Guid id, ResetPasswordRequest request, CancellationToken cancellationToken)
+    {
+        await _userService.ResetPasswordAsync(id, request, cancellationToken);
+        return NoContent();
+    }
+
+    [HttpPut("{id:guid}/roles")]
+    public async Task<IActionResult> SetRoles(Guid id, SetUserRolesRequest request, CancellationToken cancellationToken)
+    {
+        await _userService.SetRolesAsync(id, request.Roles, cancellationToken);
+        return NoContent();
     }
 }

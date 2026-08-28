@@ -40,10 +40,10 @@ public class IdentityService : IIdentityService
         if (!result.Succeeded)
             throw new ValidationException(string.Join(" ", result.Errors.Select(e => e.Description)));
 
-        if (!await _roleManager.RoleExistsAsync(UserRoles.Customer))
-            await _roleManager.CreateAsync(new IdentityRole<Guid>(UserRoles.Customer));
+        if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
+            await _roleManager.CreateAsync(new IdentityRole<Guid>(UserRoles.Admin));
 
-        await _userManager.AddToRoleAsync(user, UserRoles.Customer);
+        await _userManager.AddToRoleAsync(user, UserRoles.Admin);
 
         return await BuildAuthResponseAsync(user);
     }

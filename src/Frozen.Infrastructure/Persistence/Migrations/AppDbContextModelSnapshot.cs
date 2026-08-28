@@ -17,7 +17,6 @@ namespace Frozen.Infrastructure.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasDefaultSchema("admin")
                 .HasAnnotation("ProductVersion", "8.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
@@ -59,7 +58,7 @@ namespace Frozen.Infrastructure.Persistence.Migrations
                     b.HasIndex("Slug")
                         .IsUnique();
 
-                    b.ToTable("Categories", "admin");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("Frozen.Domain.Entities.Order", b =>
@@ -98,7 +97,6 @@ namespace Frozen.Infrastructure.Persistence.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("ShippingCountry")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
@@ -117,12 +115,13 @@ namespace Frozen.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(20)");
 
                     b.Property<string>("ShippingState")
-                        .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("character varying(150)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<decimal>("SubTotal")
                         .HasColumnType("decimal(18,2)");
@@ -144,7 +143,7 @@ namespace Frozen.Infrastructure.Persistence.Migrations
                     b.HasIndex("OrderNumber")
                         .IsUnique();
 
-                    b.ToTable("Orders", "admin");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("Frozen.Domain.Entities.OrderItem", b =>
@@ -182,7 +181,7 @@ namespace Frozen.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderItems", "admin");
+                    b.ToTable("OrderItems", (string)null);
                 });
 
             modelBuilder.Entity("Frozen.Domain.Entities.Product", b =>
@@ -256,7 +255,7 @@ namespace Frozen.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("SupplierId");
 
-                    b.ToTable("Products", "admin");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("Frozen.Domain.Entities.Supplier", b =>
@@ -293,7 +292,7 @@ namespace Frozen.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Suppliers", "admin");
+                    b.ToTable("Suppliers", (string)null);
                 });
 
             modelBuilder.Entity("Frozen.Infrastructure.Identity.ApplicationUser", b =>
@@ -369,7 +368,7 @@ namespace Frozen.Infrastructure.Persistence.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.ToTable("Users", "admin");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
@@ -396,7 +395,7 @@ namespace Frozen.Infrastructure.Persistence.Migrations
                         .IsUnique()
                         .HasDatabaseName("RoleNameIndex");
 
-                    b.ToTable("Roles", "admin");
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -420,7 +419,7 @@ namespace Frozen.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("RoleClaims", "admin");
+                    b.ToTable("RoleClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
@@ -444,7 +443,7 @@ namespace Frozen.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserClaims", "admin");
+                    b.ToTable("UserClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
@@ -465,7 +464,7 @@ namespace Frozen.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserLogins", "admin");
+                    b.ToTable("UserLogins", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
@@ -480,7 +479,7 @@ namespace Frozen.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("UserRoles", "admin");
+                    b.ToTable("UserRoles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
@@ -499,7 +498,7 @@ namespace Frozen.Infrastructure.Persistence.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("UserTokens", "admin");
+                    b.ToTable("UserTokens", (string)null);
                 });
 
             modelBuilder.Entity("Frozen.Domain.Entities.Category", b =>

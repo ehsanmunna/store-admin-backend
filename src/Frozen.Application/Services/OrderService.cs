@@ -1,6 +1,5 @@
 using Frozen.Application.Common;
 using Frozen.Application.DTOs.Orders;
-using Frozen.Application.DTOs.Messaging;
 using Frozen.Application.Exceptions;
 using Frozen.Application.Interfaces;
 using Frozen.Domain.Entities;
@@ -13,12 +12,10 @@ namespace Frozen.Application.Services;
 public class OrderService : IOrderService
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IOrderEventPublisher? _orderEventPublisher;
 
-    public OrderService(IUnitOfWork unitOfWork, IOrderEventPublisher? orderEventPublisher = null)
+    public OrderService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
-        _orderEventPublisher = orderEventPublisher;
     }
 
     public async Task<PagedResult<OrderDto>> GetAllAsync(PagedRequest request, Guid? userId, OrderStatus? status, CancellationToken cancellationToken = default)
@@ -128,11 +125,6 @@ public class OrderService : IOrderService
 
         _unitOfWork.Orders.Update(order);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-        if (_orderEventPublisher is not null)
-        {
-            await _orderEventPublisher.PublishOrderStatusUpdatedAsync(order.OrderNumber, request.Status, cancellationToken);
-        }
 
         return await GetByIdAsync(order.Id, cancellationToken);
     }

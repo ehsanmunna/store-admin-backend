@@ -13,13 +13,15 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.Property(o => o.OrderNumber).IsRequired().HasMaxLength(50);
         builder.HasIndex(o => o.OrderNumber).IsUnique();
 
+        builder.Property(o => o.Status).HasConversion<string>().HasMaxLength(50);
+
         builder.Property(o => o.ShippingFullName).IsRequired().HasMaxLength(200);
         builder.Property(o => o.ShippingAddressLine1).IsRequired().HasMaxLength(300);
         builder.Property(o => o.ShippingAddressLine2).HasMaxLength(300);
         builder.Property(o => o.ShippingCity).IsRequired().HasMaxLength(150);
-        builder.Property(o => o.ShippingState).IsRequired().HasMaxLength(150);
+        builder.Property(o => o.ShippingState).HasMaxLength(150);
         builder.Property(o => o.ShippingPostalCode).IsRequired().HasMaxLength(20);
-        builder.Property(o => o.ShippingCountry).IsRequired().HasMaxLength(100);
+        builder.Property(o => o.ShippingCountry).HasMaxLength(100);
         builder.Property(o => o.ShippingPhone).HasMaxLength(30);
         builder.Property(o => o.Notes).HasMaxLength(1000);
 

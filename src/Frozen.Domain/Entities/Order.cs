@@ -14,9 +14,9 @@ public class Order : BaseEntity
     public string ShippingAddressLine1 { get; set; } = string.Empty;
     public string? ShippingAddressLine2 { get; set; }
     public string ShippingCity { get; set; } = string.Empty;
-    public string ShippingState { get; set; } = string.Empty;
+    public string? ShippingState { get; set; }
     public string ShippingPostalCode { get; set; } = string.Empty;
-    public string ShippingCountry { get; set; } = string.Empty;
+    public string? ShippingCountry { get; set; }
     public string? ShippingPhone { get; set; }
 
     public decimal SubTotal { get; set; }

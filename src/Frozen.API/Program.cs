@@ -2,7 +2,6 @@ using System.Text.Json.Serialization;
 using Frozen.API.Middleware;
 using Frozen.Application;
 using Frozen.Infrastructure;
-using Frozen.Infrastructure.Identity;
 using Frozen.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -79,11 +78,30 @@ try
 
     var app = builder.Build();
 
+    if (!app.Environment.IsDevelopment())
+    {
+        var requiredSettings = new[]
+        {
+            "ConnectionStrings:DefaultConnection",
+            "Jwt:Secret"
+        };
+
+        var missingSettings = requiredSettings
+            .Where(key => string.IsNullOrEmpty(app.Configuration[key]))
+            .ToArray();
+
+        if (missingSettings.Length > 0)
+        {
+            throw new InvalidOperationException(
+                $"Missing required configuration for environment '{app.Environment.EnvironmentName}': {string.Join(", ", missingSettings)}. " +
+                "Set these via environment variables (e.g. ConnectionStrings__DefaultConnection) or the hosting platform's secret store.");
+        }
+    }
+
     using (var scope = app.Services.CreateScope())
     {
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         await db.Database.MigrateAsync();
-        await AdminSeeder.SeedAsync(scope.ServiceProvider);
     }
 
     if (app.Environment.IsDevelopment())

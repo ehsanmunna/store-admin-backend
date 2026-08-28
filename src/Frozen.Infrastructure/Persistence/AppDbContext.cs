@@ -22,7 +22,6 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
     {
         base.OnModelCreating(builder);
 
-        builder.HasDefaultSchema("admin");
         builder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
         foreach (var entityType in builder.Model.GetEntityTypes())

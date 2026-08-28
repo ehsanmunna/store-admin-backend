@@ -2,7 +2,6 @@ using System.Text;
 using Frozen.Application.Interfaces;
 using Frozen.Domain.Interfaces;
 using Frozen.Infrastructure.Identity;
-using Frozen.Infrastructure.Messaging;
 using Frozen.Infrastructure.Persistence;
 using Frozen.Infrastructure.Persistence.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -19,9 +18,7 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<AppDbContext>(options =>
-            options.UseNpgsql(
-                configuration.GetConnectionString("DefaultConnection"),
-                npgsqlOptions => npgsqlOptions.MigrationsHistoryTable("__EFMigrationsHistory", "admin")));
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
         services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
             {
@@ -34,15 +31,10 @@ public static class DependencyInjection
             .AddDefaultTokenProviders();
 
         services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionName));
-        services.Configure<SeedAdminSettings>(configuration.GetSection(SeedAdminSettings.SectionName));
         services.AddSingleton<JwtTokenGenerator>();
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IUserService, UserService>();
-
-        services.Configure<RabbitMqSettings>(configuration.GetSection(RabbitMqSettings.SectionName));
-        services.AddSingleton<ICatalogEventPublisher, CatalogEventPublisher>();
-        services.AddSingleton<IOrderEventPublisher, OrderEventPublisher>();
-        services.AddHostedService<OrderEventConsumer>();
+        services.AddScoped<IRoleService, RoleService>();
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));

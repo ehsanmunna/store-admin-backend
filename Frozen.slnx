@@ -5,4 +5,7 @@
     <Project Path="src/Frozen.Domain/Frozen.Domain.csproj" />
     <Project Path="src/Frozen.Infrastructure/Frozen.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/GeneratePasswordHash/GeneratePasswordHash.csproj" />
+  </Folder>
 </Solution>
